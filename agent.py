@@ -1,4 +1,5 @@
 import asyncio
+import os
 
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
@@ -26,8 +27,8 @@ controller = Controller()
 
 async def main():
     task = "Find a one-way flight from Tokyo to NewYork on 2 April 2025 on Google Flights. Return me the cheapest option."
-
     # task = "Provide a recipe for vegetarian lasagna with more than 100 reviews and a rating of at least 4.5 stars suitable for 6 people."
+    # task = f"我想给我3岁女儿在淘宝买个裤子，我想要销量最多的那个加到购物车里。如果没登录的话先登录下，账号是:{os.environ['TAOBAO_NAME']}，密码是:{os.environ['TAOBAO_PASSWORD']}"
 
     task_plan = await get_task_plan(task)
     # print(task_plan)

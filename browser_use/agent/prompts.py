@@ -51,6 +51,7 @@ class SystemPrompt:
    - After a successful login, do not trigger the login process again!
 7) Others:
    - If a popup appears when opening the page, determine whether it is related to the goal. If it is not, close it.
+   - In a shopping scenario, please note that before adding an item to the cart or making a purchase, you need to select the product attributes such as color, size, etc. Make sure to choose them before proceeding.
 """
 
     def input_format(self) -> str:
