@@ -64,7 +64,7 @@ class Controller:
 		async def go_back(browser: BrowserContext):
 			page = await browser.get_current_page()
 			await page.go_back()
-			await page.wait_for_load_state()
+			await page.wait_for_load_state('load')
 			msg = '🔙  Navigated back'
 			logger.info(msg)
 			return ActionResult(extracted_content=msg, include_in_memory=True)
@@ -230,41 +230,41 @@ class Controller:
 			logger.info(msg)
 			return ActionResult(extracted_content=msg, include_in_memory=True)
 
-		@self.registry.action(
-			description='If you dont find something which you want to interact with, scroll to it',
-			requires_browser=True,
-		)
-		async def scroll_to_text(text: str, browser: BrowserContext):  # type: ignore
-			page = await browser.get_current_page()
-			try:
-				# Try different locator strategies
-				locators = [
-					page.get_by_text(text, exact=False),
-					page.locator(f'text={text}'),
-					page.locator(f"//*[contains(text(), '{text}')]"),
-				]
-
-				for locator in locators:
-					try:
-						# First check if element exists and is visible
-						if await locator.count() > 0 and await locator.first.is_visible():
-							await locator.first.scroll_into_view_if_needed()
-							await asyncio.sleep(0.5)  # Wait for scroll to complete
-							msg = f'🔍  Scrolled to text: {text}'
-							logger.info(msg)
-							return ActionResult(extracted_content=msg, include_in_memory=True)
-					except Exception as e:
-						logger.debug(f'Locator attempt failed: {str(e)}')
-						continue
-
-				msg = f"Text '{text}' not found or not visible on page"
-				logger.info(msg)
-				return ActionResult(extracted_content=msg, include_in_memory=True)
-
-			except Exception as e:
-				msg = f"Failed to scroll to text '{text}': {str(e)}"
-				logger.error(msg)
-				return ActionResult(error=msg, include_in_memory=True)
+		# @self.registry.action(
+		# 	description='If you dont find something which you want to interact with, scroll to it',
+		# 	requires_browser=True,
+		# )
+		# async def scroll_to_text(text: str, browser: BrowserContext):  # type: ignore
+		# 	page = await browser.get_current_page()
+		# 	try:
+		# 		# Try different locator strategies
+		# 		locators = [
+		# 			page.get_by_text(text, exact=False),
+		# 			page.locator(f'text={text}'),
+		# 			page.locator(f"//*[contains(text(), '{text}')]"),
+		# 		]
+		#
+		# 		for locator in locators:
+		# 			try:
+		# 				# First check if element exists and is visible
+		# 				if await locator.count() > 0 and await locator.first.is_visible():
+		# 					await locator.first.scroll_into_view_if_needed()
+		# 					await asyncio.sleep(0.5)  # Wait for scroll to complete
+		# 					msg = f'🔍  Scrolled to text: {text}'
+		# 					logger.info(msg)
+		# 					return ActionResult(extracted_content=msg, include_in_memory=True)
+		# 			except Exception as e:
+		# 				logger.debug(f'Locator attempt failed: {str(e)}')
+		# 				continue
+		#
+		# 		msg = f"Text '{text}' not found or not visible on page"
+		# 		logger.info(msg)
+		# 		return ActionResult(extracted_content=msg, include_in_memory=True)
+		#
+		# 	except Exception as e:
+		# 		msg = f"Failed to scroll to text '{text}': {str(e)}"
+		# 		logger.error(msg)
+		# 		return ActionResult(error=msg, include_in_memory=True)
 
 		@self.registry.action(
 			description='Get all options from a native dropdown',

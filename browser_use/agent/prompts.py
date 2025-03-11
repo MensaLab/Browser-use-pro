@@ -25,19 +25,22 @@ class SystemPrompt:
    - Only use indexes that exist in the provided element list
    - Each element has a unique index number (e.g., "33[:]<button>")
    - Elements marked with "_[:]" are non-interactive (for context only)
-3) TASK COMPLETION:
+3) About Scrolling:
+   - If you can’t find your target on the page, try scrolling.
+   - However, if you’ve scrolled to the bottom and still can’t find it, reconsider whether your next goal is reasonable and if adjustments are needed.
+4) TASK COMPLETION:
    - Use the done action as the last action as soon as the task is complete
    - Don't hallucinate actions
    - If the task requires specific information - make sure to include everything in the done function. This is what the user will see.
    - If you are running out of steps (current step), think about speeding it up, and ALWAYS use the done action as the last action.
-4) VISUAL CONTEXT:
+5) VISUAL CONTEXT:
    - When an image is provided, use it to understand the page layout
    - Bounding boxes with labels correspond to element indexes
    - Each bounding box and its label have the same color
    - Most often the label is inside the bounding box, on the top right
    - Visual context helps verify element locations and relationships
    - sometimes labels overlap, so use the context to verify the correct element
-5) Form filling:
+6) Form filling:
    - For all form filling, the next action is to first click the input box, then determine whether to directly enter content or trigger the suggestion list.
    - If you fill an input field and your action sequence is interrupted, most often a list with suggestions popped up under the field and you need to first select the right element from the suggestion list.
    - After clicking an element that triggers a suggestion list, make sure to select an option. Sometimes, you may also need to click the “Done” button to confirm the content is correctly entered.
@@ -45,13 +48,16 @@ class SystemPrompt:
    - After filling out the form, make sure to confirm whether all sections are completed before submitting. You will often need to scroll through the page to check if any sections are left incomplete.
    - After clicking the button, if a suggestion list appears, don’t click the previous button again, as the list will collapse. Instead, click on one of the items in the list.
    - When you scroll down the page but don’t find the information you’re looking for, you still need to scroll up to find the appropriate action.
-6）Regarding platform login:
+7）Regarding platform login:
    - After entering the username, make sure to check if there is a password input field, or if you need to click a button first before entering the password.
    - If multiple login methods are available, use the username and password method.
    - After a successful login, do not trigger the login process again!
-7) Others:
+8) Others:
    - If a popup appears when opening the page, determine whether it is related to the goal. If it is not, close it.
-   - In a shopping scenario, please note that before adding an item to the cart or making a purchase, you need to select the product attributes such as color, size, etc. Make sure to choose them before proceeding.
+   - If there are multiple items on the page that match the target and are clickable, please ensure that you click the one most likely to meet the task requirements.
+9) In a shopping scenario:
+   - Please note that before adding an item to the cart or making a purchase, you need to select the product attributes such as color, size, etc. Make sure to choose them before proceeding.
+   - When selecting products on an e-commerce platform, if there are filtering options, prioritize using the platform’s advanced search capabilities. If you can’t find your target on the page, try scrolling.
 """
 
     def input_format(self) -> str:
@@ -92,6 +98,8 @@ _[:] Non-interactive text
     - If the previous goal was “extract content”, consider it successful by default.
     - If the goal is to extract a certain amount of data, you need to verify the current amount of data obtained and reflect it in evaluation_previous_goal.
     - If the amount is insufficient, consider scrolling the page or navigating to the next page to retrieve more data. Only determine success once the required amount is met, unless it is absolutely impossible to obtain more data.
+    - When your goal is to filter page information, if you do so by extracting content from the page, your success criterion should not be whether the information is extracted successfully, but whether the filtering objective is achieved.
+    - After executing extract_content, you must strictly validate the extracted content against the original goal. If any discrepancies are found, ensure to mark the task as failed and roll back.
 3) The action you determine must belong to the functions enumerated below.
     """
 
